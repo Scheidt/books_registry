@@ -8,22 +8,24 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"pet_shop_registry/storage"
+	"pet_shop_registry/models"
 	"strconv"
 	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	
 	"gorm.io/gorm"
 )
 
 type Pet struct {
 	ID    			int			`json: "id"`
-	name    		*string		`json: "name"`
-	age  			int			`json: "age"`
-	owner   		string		`json: "owner"`
-	size    		string		`json: "size"`
-	weight			float32		`json: "weight"`
-	paidThisMonth 	bool		`json: "paid"`
+	Name    		*string		`json: "name"`
+	Age  			int			`json: "age"`
+	Owner   		string		`json: "owner"`
+	Size    		string		`json: "size"`
+	Weight			float32		`json: "weight"`
+	PaidThisMonth 	bool		`json: "paid"`
 }
 
 type Repository struct {
@@ -44,6 +46,29 @@ func (r *Repository) CreatePet(context *fiber.Ctx) error {
 		return err
 	}
 	context.Status(http.StatusOK).JSON(&fiber.Map{"message":"pet has been added"})
+	return nil
+}
+
+
+func (r *Repository) DeletePet(context *fiber.Ctx) error{
+	petModel := models.Pet{}
+	id := context.Params("id")
+	if id == ""{
+		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message":"id cannot be empty"})
+		return nil
+	}
+
+	err := r.DB.Delete(petModel, id)
+	if err.Error != nil {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message":"error deleting pet"})
+		return err.Error
+	}
+	context.Status(http.StatusOK).JSON(&fiber.Map{"message":"successful on deleting pet"})
+	return nil
+}
+
+func (r *Repository) GetPetByID (context *fiber.Ctx) error{
+	
 	return nil
 }
 
@@ -108,16 +133,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	config := &database.Config{
-		host: os.Getenv("DB_HOST"),
-		port: os.Getenv("DB_PORT"),
-		password: os.Getenv("DB_PASS"),
-		user: os.Getenv("DB_USER"),
-		sslmode: os.Getenv("DB_SSLMODE"),
-		dbName: os.Getenv("DB_NAME"),
+	config := &storage.Config{
+		Host: os.Getenv("DB_HOST"),
+		Port: os.Getenv("DB_PORT"),
+		Password: os.Getenv("DB_PASS"),
+		User: os.Getenv("DB_USER"),
+		DBName: os.Getenv("DB_NAME"),
+		SSLMode: os.Getenv("DB_SSLMODE"),
 	}
 
-	db, err := database.establishConnection(config)
+	db, err := storage.EstablishConnection(config)
 
 	if err != nil {
 		log.Fatal("could not load the database")
