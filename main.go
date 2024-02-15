@@ -12,16 +12,18 @@ import (
 	"strings"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"golang.org/x/mod/sumdb/storage"
+	
 	"gorm.io/gorm"
 )
 
 type Pet struct {
-	name    string
-	age  	int
-	owner   string
-	size    string
-	paidThisMonth bool
+	ID    			int			`json: "id"`
+	name    		*string		`json: "name"`
+	age  			int			`json: "age"`
+	owner   		string		`json: "owner"`
+	size    		string		`json: "size"`
+	weight			float32		`json: "weight"`
+	paidThisMonth 	bool		`json: "paid"`
 }
 
 type Repository struct {
@@ -106,8 +108,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	config := &database.Config{
+		host: os.Getenv("DB_HOST"),
+		port: os.Getenv("DB_PORT"),
+		password: os.Getenv("DB_PASS"),
+		user: os.Getenv("DB_USER"),
+		sslmode: os.Getenv("DB_SSLMODE"),
+		dbName: os.Getenv("DB_NAME"),
+	}
 
-	db, err := storage.NewConnection(config)
+	db, err := database.establishConnection(config)
 
 	if err != nil {
 		log.Fatal("could not load the database")
