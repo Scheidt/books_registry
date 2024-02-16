@@ -3,29 +3,25 @@ package main
 // go run main.go
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"pet_shop_registry/models"
 	"pet_shop_registry/storage"
-	"strconv"
-	"strings"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
 type Pet struct {
-	ID            int     `json: "id"`
-	Name          *string `json: "name"`
-	Age           int     `json: "age"`
-	Owner         string  `json: "owner"`
-	Size          string  `json: "size"`
-	Weight        float32 `json: "weight"`
-	PaidThisMonth bool    `json: "paid"`
+	ID            int		`json: "id"`
+	Name          string	`json: "name"`
+	Age           int		`json: "age"`
+	Owner         string	`json: "owner"`
+	Size          string	`json: "size"`
+	Weight        float32	`json: "weight"`
+	PaidThisMonth bool		`json: "paid"`
 }
 
 type Repository struct {
@@ -106,42 +102,6 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Delete("/delete_pet/:id", r.DeletePet)
 	api.Get("/get_pets/:id", r.GetPetByID)
 	api.Get("/pet", r.GetPet)
-}
-
-//type pet struct {
-//	title    string
-//	pubYear  int
-//	author   string
-//	genre    [2]string
-//	borrowed bool
-//}
-
-func getStringInput(texto string) string {
-	fmt.Print(texto)
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	input := scanner.Text()
-	input = strings.ReplaceAll(input, "'", "''")
-	return input
-}
-
-func getIntInput(message string) int {
-	var userInput int
-	for {
-		fmt.Print(message)
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		input := strings.TrimSpace(scanner.Text())
-
-		value, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Only integer numbers are allowed, please, try again: ")
-			continue
-		}
-		userInput = value
-		break
-	}
-	return userInput
 }
 
 func main() {
