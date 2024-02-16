@@ -103,7 +103,7 @@ func (r *Repository) GetPet(context *fiber.Ctx) error {
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/create_pets", r.CreatePet)
-	api.Delete("delete_pet/:id", r.DeletePet)
+	api.Delete("/delete_pet/:id", r.DeletePet)
 	api.Get("/get_pets/:id", r.GetPetByID)
 	api.Get("/pet", r.GetPet)
 }
