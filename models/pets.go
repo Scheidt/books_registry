@@ -12,7 +12,7 @@ type Pet struct{
 	PaidThisMonth 	bool		`json: "paid"`
 }
 
-func migratePets(db *gorm.DB) error{
+func MigratePets(db *gorm.DB) error{
 	err:= db.AutoMigrate(&Pet{})
 	return err
 }
