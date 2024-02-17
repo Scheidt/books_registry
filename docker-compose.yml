@@ -1,0 +1,32 @@
+version: '0.1'
+services:
+  database:
+    env_file:
+      - ".env"
+    image: "project-database:latest"
+    ports:
+      - "4242:4242"
+    volumes: 
+      - ./database/data:/var/lib/postgresql/data
+    networks:
+      - default
+    build:
+      context: "./database"
+      dockerfile: "database.dockerfile"
+    command: -p 4242
+  golang:
+    env_file:
+      - ".env"
+    image: "project-golang:latest"
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./go:/app
+    networks:
+      - default
+    build:
+      context: "./go"
+      dockerfile: "go.dockerfile"
+networks:
+  default:
+    driver: bridge
