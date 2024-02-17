@@ -45,7 +45,7 @@ func (r *Repository) CreatePet(context *fiber.Ctx) error {
 		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "couldn't create pet"})
 		return err
 	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{"message": "pet has been added"})
+	context.Status(http.StatusOK).JSON(&fiber.Map{"message": "pet has been added successfully"})
 	return nil
 }
 
@@ -53,16 +53,16 @@ func (r *Repository) DeletePet(context *fiber.Ctx) error {
 	petModel := models.Pet{}
 	id := context.Params("id")
 	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "id cannot be empty"})
+		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "must provide an ID"})
 		return nil
 	}
 
 	err := r.DB.Delete(petModel, id)
 	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "error deleting pet"})
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "couldn't delete pet"})
 		return err.Error
 	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{"message": "successful on deleting pet"})
+	context.Status(http.StatusOK).JSON(&fiber.Map{"message": "pet has been deleted successfully"})
 	return nil
 }
 
@@ -70,7 +70,7 @@ func (r *Repository) GetPetByID(context *fiber.Ctx) error { //WIP
 	id := context.Params("id")
 	petModel := &models.Pet{}
 	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "empty id"})
+		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "must provide and ID"})
 		return nil
 	}
 
@@ -78,7 +78,7 @@ func (r *Repository) GetPetByID(context *fiber.Ctx) error { //WIP
 
 	err := r.DB.Where("id = ?", id).First(petModel).Error
 	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "no pet with this ID"})
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "no pet with ID " + id})
 		return err
 	}
 	context.Status(http.StatusOK).JSON(&fiber.Map{
